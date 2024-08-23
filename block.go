@@ -14,7 +14,8 @@ import (
 var log = clog.NewWithPlugin("blockplugin")
 
 type Block struct {
-	Next plugin.Handler
+	Next  plugin.Handler
+	Zones []string
 }
 
 func (e Block) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
@@ -22,6 +23,12 @@ func (e Block) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (
 
 	domain := state.Name()
 	fmt.Printf("Request received: %s", domain)
+
+	zone := plugin.Zones(e.Zones).Matches(state.Name())
+	if zone == "" {
+		fmt.Println("Zone not found on Server")
+		return plugin.NextOrFailure(state.Name(), e.Next, ctx, w, r)
+	}
 
 	return plugin.NextOrFailure(e.Name(), e.Next, ctx, w, r)
 }

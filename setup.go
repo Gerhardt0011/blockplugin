@@ -15,7 +15,9 @@ func setup(c *caddy.Controller) error {
 	}
 
 	dnsserver.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
-		return Block{Next: next}
+		zones := plugin.OriginsFromArgsOrServerBlock(c.RemainingArgs(), c.ServerBlockKeys)
+
+		return Block{Next: next, Zones: zones}
 	})
 
 	return nil
