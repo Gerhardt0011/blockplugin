@@ -17,27 +17,14 @@ type Block struct {
 }
 
 func (e Block) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
-	log.Debug("Received response")
+	fmt.Printf("%+v\n", r)
+	fmt.Printf("%+v\n", w)
 
-	pw := NewResponsePrinter(w)
-
-	return plugin.NextOrFailure(e.Name(), e.Next, ctx, pw, r)
+	return plugin.NextOrFailure(e.Name(), e.Next, ctx, w, r)
 }
 
 func (e Block) Name() string { return "blockplugin" }
 
 type ResponsePrinter struct {
 	dns.ResponseWriter
-}
-
-func NewResponsePrinter(w dns.ResponseWriter) *ResponsePrinter {
-	return &ResponsePrinter{ResponseWriter: w}
-}
-
-func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
-	fmt.Println("======================================")
-	fmt.Printf("%+v\n", res)
-	fmt.Println("======================================")
-
-	return r.ResponseWriter.WriteMsg(res)
 }
