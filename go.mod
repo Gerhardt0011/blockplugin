@@ -1,4 +1,4 @@
-module github.com/gerhardt0011/blockplugin
+module github.com/Gerhardt0011/blockplugin
 
 go 1.22.4
 

@@ -1,3 +1,3 @@
 package blockplugin
 
-func (e Example) Ready() bool { return true }
+func (e Block) Ready() bool { return true }
