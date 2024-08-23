@@ -6,6 +6,7 @@ import (
 
 	"github.com/coredns/coredns/plugin"
 	clog "github.com/coredns/coredns/plugin/pkg/log"
+	"github.com/coredns/coredns/request"
 
 	"github.com/miekg/dns"
 )
@@ -17,8 +18,10 @@ type Block struct {
 }
 
 func (e Block) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
-	fmt.Printf("%+v\n", r)
-	fmt.Printf("%+v\n", w)
+	state := request.Request{W: w, Req: r}
+
+	domain := state.Name()
+	fmt.Printf("Request received: %s", domain)
 
 	return plugin.NextOrFailure(e.Name(), e.Next, ctx, w, r)
 }
