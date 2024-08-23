@@ -5,13 +5,12 @@ import (
 	"fmt"
 
 	"github.com/coredns/coredns/plugin"
-	"github.com/coredns/coredns/plugin/metrics"
 	clog "github.com/coredns/coredns/plugin/pkg/log"
 
 	"github.com/miekg/dns"
 )
 
-var log = clog.NewWithPlugin("example")
+var log = clog.NewWithPlugin("blockplugin")
 
 type Block struct {
 	Next plugin.Handler
@@ -21,8 +20,6 @@ func (e Block) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (
 	log.Debug("Received response")
 
 	pw := NewResponsePrinter(w)
-
-	requestCount.WithLabelValues(metrics.WithServer(ctx)).Inc()
 
 	return plugin.NextOrFailure(e.Name(), e.Next, ctx, pw, r)
 }
